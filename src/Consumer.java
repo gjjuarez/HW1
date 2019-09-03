@@ -14,6 +14,7 @@ public class Consumer {
     public static void main(String[] args) throws IOException {
         Consumer server=new Consumer();
         server.start(6666);
+        server.stop();
     }
 
     public void start(int port) throws IOException {
@@ -22,14 +23,19 @@ public class Consumer {
         clientSocket = serverSocket.accept();
         out = new PrintWriter(clientSocket.getOutputStream(), true);
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        String greeting = in.readLine();
-        if ("hello consumer".equals(greeting)) {
-            //System.out.println("Listening on port 6666");
-            out.println("hello producer");
+
+        String inputLine;
+        while ((inputLine = in.readLine()) != null){
+            if (inputLine.equals("exit")){
+                out.println("good bye");
+                System.out.println("Good bye");
+                stop();
+                break;
+            }
+            System.out.println(inputLine);
+            out.println(inputLine);
         }
-        else {
-            out.println("unrecognised greeting");
-        }
+
     }
 
     public void stop() throws IOException {
