@@ -4,6 +4,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
+import java.util.ArrayList;
 
 public class Consumer {
     
@@ -35,6 +37,8 @@ public class Consumer {
         }
 
         public void run() {
+            int counter = 0;
+            ArrayList<String> inputs = new ArrayList<String>();
             try {
                 out = new PrintWriter(clientSocket.getOutputStream(), true);
                 in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -45,14 +49,29 @@ public class Consumer {
                         System.out.println("Good Bye");
                         //out.println("bye");
                         break;
+                    }else if(counter<5){
+                        inputs.add(inputLine);
+                        Thread.sleep(1000);
+                        System.out.println(inputLine);
+                        counter++;
+                        out.println("Not full");
+                    }else if(counter == 5){
+                        System.out.println("Consumer is full. Please wait...");
+                        inputs.clear();
+                        out.println("Consumer is full");
+                        Thread.sleep(2000);
+                        System.out.println("Cleared");
+                        counter = 0;
                     }
-                    System.out.println(inputLine);
+                    //inputLine = in.readLine();
+                    //System.out.println(inputLine);
+                    //out.println("arg");
                     //out.println(inputLine);
                 }
                 in.close();
                 out.close();
                 clientSocket.close();
-            }catch (IOException e) {
+            }catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
         }
